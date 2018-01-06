@@ -1,8 +1,9 @@
-import {Component, NgModule} from '@angular/core'
-import {BrowserModule} from '@angular/platform-browser'
+import { Component, NgModule } from '@angular/core'
+import { BrowserModule } from '@angular/platform-browser'
 import { HttpModule } from '@angular/http';
 import { HackerNewsService } from './hackernews.service'
 import { InfiniteScrollerDirective } from './infinite-scroller.directive';
+import { tap } from 'rxjs/operators';
 
 @Component({
   selector: 'app-root',
@@ -20,10 +21,13 @@ export class AppComponent {
 
   constructor(private hackerNewsSerivce: HackerNewsService) {
     this.scrollCallback = this.getStories.bind(this);
-   }
+  }
 
   getStories() {
-    return this.hackerNewsSerivce.getLatestStories(this.currentPage).do(this.processData);
+    return this.hackerNewsSerivce.getLatestStories(this.currentPage)
+      .pipe(
+        tap(this.processData)
+      );
   }
 
   private processData = (news) => {
